@@ -48,7 +48,7 @@ export const test = base.extend<{
     use(serviceWorker)
       .then(() => {
         console.log('Keeping browser around')
-        serviceWorker.close();
+        context.close();
       })
   },
 
