@@ -1,7 +1,7 @@
 import corePlugin from '@bric/rex-core/service-worker'
-import contentProcessingPlugin from '@bric/rex-content-processing/service-worker'
+import headerPlugin from '@bric/rex-headers/service-worker'
 
 console.log(`Imported ${corePlugin} into service worker context...`)
-console.log(`Imported ${contentProcessingPlugin} into service worker context...`)
+console.log(`Imported ${headerPlugin} into service worker context...`)
 
 corePlugin.setup()

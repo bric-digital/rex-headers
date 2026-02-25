@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "REX Content Processing Test Extension",
+  "name": "REX Headers Test Extension",
   "version": "1.0.0",
-  "description": "Test extension for rex-content-processing modules",
+  "description": "Test extension for rex-headers modules.",
   "permissions": [
     "storage"
   ],

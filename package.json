@@ -1,7 +1,7 @@
 {
   "name": "@bric/rex-headers",
   "version": "0.0.1",
-  "description": "REX module defining content-processing infrastructure for tasks such as sanitizing sensitive data.",
+  "description": "REX module for manipulating headers.",
   "keywords": [
     "extension",
     "rex"

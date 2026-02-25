@@ -152,10 +152,6 @@ class REXHeadersModule extends REXServiceWorkerModule {
       urls: urlPatterns
     }, ['requestHeaders'])
   }
-
-  handleMessage(message:any, sender:any, sendResponse:(response:any) => void):boolean { // eslint-disable-line @typescript-eslint/no-explicit-any
-    return false
-  }
 }
 
 const plugin = new REXHeadersModule()
