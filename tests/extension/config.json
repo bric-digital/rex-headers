@@ -1,12 +1,21 @@
 {
     "configuration_url": "config.json",
+    "identifier": "rex-headers-test",
     "headers": {
-        "identifier": "<IDENTIFIER>"
-    },
-    "content_processing": {
+        "enabled": true,
+        "debug": true,
+        "patterns": [{
+            "pattern": "http://localhost:3000/*",
+            "header": "user-agent",
+            "value": "REX Headers Test Extension"
+        }, {
+            "pattern": "http://localhost:3000/*",
+            "header": "x-rex-identifier",
+            "value": "<IDENTIFIER>"
+        }]
     },
     "ui": [{
-        "title": "REX Content Processing Extension",
+        "title": "REX Headers Module Testing Extension",
         "identifier": "main",
         "default": true
     }]

@@ -149,9 +149,11 @@ tests/node_modules/
 tests/list-utilities.bundle.js
 tests/list-utilities.bundle.js.map
 tests/.playwright/
+tests/extension/js
 
 # Playwright
 /playwright-report/
 /blob-report/
 /playwright/.cache/
 /playwright/.auth/
+

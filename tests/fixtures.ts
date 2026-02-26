@@ -5,13 +5,13 @@ import { fileURLToPath } from 'url';
 export const test = base.extend<{
   context: BrowserContext
   extensionId: string,
-  serviceWorker,
+  serviceWorker:ServiceWorker,
 }>({
   context: async ({ }, use) => {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    const pathToExtension = path.join(__dirname, '../dist/extension')
+    const pathToExtension = path.join(__dirname, '../tests/extension')
 
     console.log(`pathToExtension: ${pathToExtension}`)
     const context = await chromium.launchPersistentContext('', {
@@ -39,7 +39,6 @@ export const test = base.extend<{
     await use(extensionId);
   },
   serviceWorker: async ({ context }, use) => {
-    // for manifest v3:
     let [serviceWorker] = context.serviceWorkers();
     if (!serviceWorker) {
       serviceWorker = await context.waitForEvent('serviceworker');
@@ -47,11 +46,9 @@ export const test = base.extend<{
 
     use(serviceWorker)
       .then(() => {
-        console.log('Keeping browser around')
         context.close();
-      })
+    })
   },
-
 });
 
 export const expect = test.expect;

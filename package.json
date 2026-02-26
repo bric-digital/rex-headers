@@ -29,7 +29,8 @@
     "test:debug": "playwright test --debug",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
-    "test:unit": "playwright test specs/"
+    "test:unit": "playwright test specs/",
+    "server": "node tests/scripts/run-server.js"
   },
   "devDependencies": {
     "@eslint-community/eslint-utils": "^4.9.1",

@@ -4,7 +4,14 @@
   "version": "1.0.0",
   "description": "Test extension for rex-headers modules.",
   "permissions": [
-    "storage"
+    "storage",
+    "webRequest",
+    "scripting",
+    "declarativeNetRequest",
+    "declarativeNetRequestFeedback"
+  ],
+  "host_permissions": [
+    "<all_urls>"
   ],
   "action": {
     "default_icon": {

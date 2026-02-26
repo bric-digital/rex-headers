@@ -14,7 +14,32 @@ export interface HeadersConfiguration {
   patterns:HeaderPattern[],
 }
 
+const listHeaders = [
+  // 'accept',
+  // 'accept-encoding',
+  // 'accept-language',
+  // 'access-control-request-headers',
+  // 'cache-control',
+  // 'connection',
+  // 'content-language',
+  // 'cookie',
+  // 'forwarded',
+  // 'if-match',
+  // 'if-none-match',
+  // 'keep-alive',
+  // 'range',
+  // 'te',
+  // 'trailer',
+  // 'transfer-encoding',
+  // 'upgrade',
+  // 'user-agent',
+  // 'via',
+  // 'want-digest',
+  // 'x-forwarded-for',
+]
+
 class REXHeadersModule extends REXServiceWorkerModule {
+  enabled:boolean = true
   debug:boolean = false
   configuration:HeadersConfiguration
   variableMap:{string?: string} = {}
@@ -29,6 +54,13 @@ class REXHeadersModule extends REXServiceWorkerModule {
 
   setup() {
     this.refreshConfiguration()
+
+    chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((matchedRule) => {
+      if (this.debug) {
+        console.log(`[rex-headers] Matched Rule:`)
+        console.log(matchedRule)
+      }
+    })
   }
 
   configurationDetails():any { // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -48,11 +80,22 @@ class REXHeadersModule extends REXServiceWorkerModule {
   refreshConfiguration() {
     rexCorePlugin.fetchConfiguration()
       .then((configuration:REXConfiguration) => {
+        console.log('config')
+        console.log(configuration)
+
         if (configuration !== undefined) {
           const headersConfig = configuration['headers']
 
+          if (headersConfig['debug'] !== undefined) {
+            this.debug = headersConfig['debug']
+          }
+
+          if (headersConfig['enabled'] !== undefined) {
+            this.enabled = headersConfig['enabled']
+          }
+
           if (this.debug) {
-            console.log(`[Headers] Configuration:`)
+            console.log(`[rex-headers] Configuration:`)
             console.log(headersConfig)
           }
 
@@ -62,7 +105,9 @@ class REXHeadersModule extends REXServiceWorkerModule {
             rexCorePlugin.handleMessage({
               messageType: 'getIdentifier'
             }, this, (identifier) => {
-              this.variableMap['<IDENTIFIER>'] = identifier
+              if (identifier !== undefined) {
+                this.variableMap['<IDENTIFIER>'] = `${identifier}`
+              }
 
               this.updateConfiguration(headersConfig)
             })
@@ -94,63 +139,86 @@ class REXHeadersModule extends REXServiceWorkerModule {
   updateConfiguration(config:HeadersConfiguration) {
     this.configuration = config
 
-    const urlPatterns = []
+    chrome.declarativeNetRequest.getDynamicRules()
+      .then((oldRules) => {
+        const oldRuleIds = []
 
-    for (const pattern of this.configuration.patterns) {
-      if (urlPatterns.includes(pattern.pattern) === false) {
-        urlPatterns.push(pattern.pattern)
-      }
-    }
-
-    chrome.webRequest.onBeforeSendHeaders.addListener((details) => {
-      const newHeaders = []
-
-      for (const header of details.requestHeaders) {
-        newHeaders.push(header)
-      }
-
-      for (const pattern of this.configuration.patterns) {
-        const matcher = matchPattern(pattern.pattern).assertValid()
-
-        if (matcher.match(details.url)) {
-          const name:string = pattern.header
-          const value:string|undefined = this.injectValues(pattern.value)
-
-          let foundAt:number = -1
-          let remove:boolean = false
-
-          for (const header of newHeaders) {
-            if (header.name === name) {
-              foundAt = newHeaders.indexOf(header)
-
-              if (value === undefined) {
-                remove = true
-              }
-            }
-          }
-
-          if (foundAt === -1 && value !== undefined) {
-            newHeaders.push({
-              name: name,
-              value: value
-            })
-          } else if (remove) {
-            newHeaders.splice(foundAt, 1)
-          } else {
-            newHeaders[foundAt] = {
-              name: name,
-              value: value
-            }
+        for (const oldRule of oldRules) {
+          if ('modifyHeaders' === oldRule.action.type) {
+            oldRuleIds.push(oldRule.id)
           }
         }
-      }
 
-      return {
-        requestHeaders: newHeaders
-      }
-    }, {
-      urls: urlPatterns
-    }, ['requestHeaders'])
+        const newRules = []
+
+        for (const pattern of this.configuration.patterns) {
+          const newRule = {
+            operation: 'set',
+            header: pattern.header,
+            value: ''
+          }
+
+          if (listHeaders.includes(pattern.header.toLowerCase())) {
+            newRule.operation = 'append'
+          }
+
+          if (pattern.value === undefined) {
+            newRule.operation = 'remove'
+          } else {
+            newRule.value = this.injectValues(pattern.value)
+          }
+
+          const index = this.configuration.patterns.indexOf(pattern)
+          const priority = this.configuration.patterns.length - index
+
+          newRules.push({
+            id: index + 1,
+            priority: priority,
+            action: {
+              type: 'modifyHeaders',
+              requestHeaders: [newRule]
+            },
+            condition: {
+              urlFilter: pattern.pattern,
+              resourceTypes: [
+                'main_frame',
+                'sub_frame',
+                'stylesheet',
+                'script',
+                'image',
+                'font',
+                'object',
+                'xmlhttprequest',
+                'ping',
+                'csp_report',
+                'media',
+                'websocket',
+                'webtransport',
+                'webbundle',
+                'other',
+              ]
+            },
+          })
+        }
+
+        if (this.debug) {
+          console.log(`[rex-headers] Using rules:`)
+          console.log(newRules)
+        }
+
+        chrome.declarativeNetRequest.updateDynamicRules({
+          removeRuleIds: oldRuleIds,
+          addRules: newRules
+        })
+        .then(() => {
+          if (this.debug) {
+            console.log(`[rex-headers] Dynamic rules successfully updated. ${newRules.length} currently active.`)
+          }
+
+        }, (reason:any) => { // eslint-disable-line @typescript-eslint/no-explicit-any
+          console.log(`[rex-headers] Unable to update modify header rules: ${reason}`)
+        })
+      })
   }
 }
 
