@@ -39,9 +39,15 @@ export default [{
   resolve,
   plugins: [
     new CopyPlugin({
-      patterns: [
-        { from: "./tests/extension", to: ".." },
-      ],
+      patterns: [{
+        from: "./tests/extension",
+        to: ".." ,
+        globOptions: {
+          ignore: [
+            "**/extension/js/**",
+          ],
+        },
+      }],
     }),],
 }, {
   entry: {
