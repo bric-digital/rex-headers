@@ -1,4 +1,3 @@
-import { matchPattern } from 'browser-extension-url-match'
 import { REXConfiguration } from '@bric/rex-core/extension'
 import rexCorePlugin, { REXServiceWorkerModule, registerREXModule } from '@bric/rex-core/service-worker'
 

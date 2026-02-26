@@ -63,7 +63,6 @@
     "@popperjs/core": "^2.11.8",
     "bootstrap": "^5.3.8",
     "bootstrap-icons": "^1.13.1",
-    "browser-extension-url-match": "^1.2.0",
     "check-types": "^11.2.3",
     "jquery": "^3.7.1"
   }
