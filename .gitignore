@@ -149,7 +149,7 @@ tests/node_modules/
 tests/list-utilities.bundle.js
 tests/list-utilities.bundle.js.map
 tests/.playwright/
-tests/extension/js
+tests/extension/
 
 # Playwright
 /playwright-report/

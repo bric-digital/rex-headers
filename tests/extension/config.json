@@ -1,18 +1,39 @@
 {
     "configuration_url": "config.json",
     "identifier": "rex-headers-test",
-    "headers": {
+    "requests": {
         "enabled": true,
         "debug": true,
-        "patterns": [{
-            "pattern": "http://localhost:3000/*",
-            "header": "user-agent",
-            "value": "REX Headers Test Extension"
-        }, {
-            "pattern": "http://localhost:3000/*",
-            "header": "x-rex-identifier",
-            "value": "<IDENTIFIER>"
-        }]
+        "headers": {
+            "patterns": [{
+                "pattern": "http://localhost:3000/header",
+                "header": "user-agent",
+                "value": "REX Headers Test Extension"
+            }, {
+                "pattern": "http://localhost:3000/header",
+                "header": "x-rex-identifier",
+                "value": "<IDENTIFIER>"
+            }]
+        }, "post": {
+            "rules": [{
+                "pattern": "http://localhost:3000/post",
+                "key": "foo",
+                "value": "baz"
+            }, {
+                "pattern": "http://localhost:3000/post",
+                "key": "hello",
+                "value": "world",
+                "upsert": false
+            }, {
+                "pattern": "http://localhost:3000/post",
+                "key": "delete-me"
+            }, {
+                "pattern": "http://localhost:3000/post",
+                "key": "json:$.model",
+                "value": "claude",
+                "upsert": false
+            }]
+        }
     },
     "ui": [{
         "title": "REX Headers Module Testing Extension",

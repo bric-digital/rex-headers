@@ -13,7 +13,6 @@ export const test = base.extend<{
 
     const pathToExtension = path.join(__dirname, '../tests/extension')
 
-    console.log(`pathToExtension: ${pathToExtension}`)
     const context = await chromium.launchPersistentContext('', {
       channel: 'chromium',
       args: [
@@ -23,7 +22,6 @@ export const test = base.extend<{
     });
 
     setTimeout(() => {
-      console.log('Keeping browser around')
       context.close();
     }, 10000)
 

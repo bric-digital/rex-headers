@@ -1,6 +1,6 @@
 import { test, expect } from './fixtures';
 
-test('Service worker tests', async ({serviceWorker}) => {
+test('Service worker header tests', async ({serviceWorker}) => {
   return new Promise<void>((resolve) => {
     setTimeout(() => {
       serviceWorker.evaluate(async () => {
@@ -12,7 +12,7 @@ test('Service worker tests', async ({serviceWorker}) => {
             self.rexHeaderPlugin.refreshConfiguration()
 
             setTimeout(() => {
-              const testUrl = 'http://localhost:3000/'
+              const testUrl = 'http://localhost:3000/headers'
 
               fetch(testUrl).then((response:Response) => {
                   response.json().then((jsonResponse) => {
@@ -25,7 +25,6 @@ test('Service worker tests', async ({serviceWorker}) => {
                 })
             }, 2500)
           })
-
         })
       })
       .then((workerResponse) => {

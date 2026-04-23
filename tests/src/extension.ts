@@ -1,7 +1,9 @@
 import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap/dist/js/bootstrap.bundle.min.js'
 import 'bootstrap-icons/font/bootstrap-icons.css'
 
-import { rexCorePlugin, REXExtensionModule, registerREXModule, REXUIDefinition } from '@bric/rex-core/extension'
+import { REXUIDefinition } from '@bric/rex-core/common'
+import { rexCorePlugin, REXExtensionModule, registerREXModule } from '@bric/rex-core/extension'
 
 rexCorePlugin.loadInitialConfigation('config.json')
   .then(function(result) {

@@ -1,17 +1,38 @@
 // Testing web server to validate that headers are being set correctly.
 
-import http from 'node:http'
+import express from 'express'
+import multer from 'multer'
 
-const hostname = '127.0.0.1'
-const port = 3000
+const app = express();
+const port = 3000;
 
-const server = http.createServer((request, response) => {
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
+
+const upload = multer()
+
+app.get('/', (request, response) => {
+  response.send('The only way to pass a test is to take the test.')
+});
+
+app.get('/headers', (request, response) => {
   response.statusCode = 200;
   response.setHeader('Content-Type', 'application/json')
 
-  response.end(JSON.stringify(request.headers, null, '  '))
+  response.send(JSON.stringify(request.headers, null, '  '))
 });
 
-server.listen(port, hostname, () => {
-  console.log(`Server running at http://${hostname}:${port}/`);
+app.post('/post', upload.none(), (request, response) => {
+  response.statusCode = 200;
+  response.setHeader('Content-Type', 'application/json')
+
+  if ([null, undefined, ''].includes(request.body)) {
+    request.body = {}
+  }
+
+  response.send(JSON.stringify(request.body, null, '  '))
+});
+
+app.listen(port, () => {
+  console.log(`Server running on port ${port}...`);
 });
