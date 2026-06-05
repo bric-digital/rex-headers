@@ -48,13 +48,6 @@ class REXHeadersModule extends REXServiceWorkerModule {
 
   setup() {
     this.refreshConfiguration()
-
-    chrome.declarativeNetRequest.onRuleMatchedDebug.addListener((matchedRule) => {
-      if (this.debug) {
-        console.log(`[rex-requests] Matched Rule:`)
-        console.log(matchedRule)
-      }
-    })
   }
 
   configurationDetails():any { // eslint-disable-line @typescript-eslint/no-explicit-any

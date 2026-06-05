@@ -7,8 +7,7 @@
     "storage",
     "webRequest",
     "scripting",
-    "declarativeNetRequest",
-    "declarativeNetRequestFeedback"
+    "declarativeNetRequest"
   ],
   "host_permissions": [
     "<all_urls>"
