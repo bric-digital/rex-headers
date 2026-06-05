@@ -11,21 +11,23 @@ export const test = base.extend<{
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
 
-    const pathToExtension = path.join(__dirname, '../tests/extension')
+    const pathToExtension = path.join(__dirname, '../extension')
 
     const context = await chromium.launchPersistentContext('', {
       channel: 'chromium',
       args: [
         `--disable-extensions-except=${pathToExtension}`,
         `--load-extension=${pathToExtension}`,
+        `--enable-features=DeclarativeNetRequestFeedback`,
       ],
     });
 
-    setTimeout(() => {
-      context.close();
-    }, 10000)
-
-    await use(context);
+    use(context)
+      .then(() => {
+        setTimeout(() => {
+          context.close();
+        }, 10000)
+    })
   },
   extensionId: async ({ context }, use) => {
     // for manifest v3:
@@ -38,6 +40,7 @@ export const test = base.extend<{
   },
   serviceWorker: async ({ context }, use) => {
     let [serviceWorker] = context.serviceWorkers();
+
     if (!serviceWorker) {
       serviceWorker = await context.waitForEvent('serviceworker');
     }
